@@ -4736,7 +4736,7 @@ async function sendDingtalkBotNotification(title, content, config) {
     if (config.DINGTALKBOT_AT_ALL === 'true') {
       // @所有人
       if (msgType === 'text') {
-        messageData.at.isAtAll= True;
+        messageData.at.isAtAll= true;
       }
     } else if (config.DINGTALKBOT_AT_MOBILES) {
       // @指定手机号

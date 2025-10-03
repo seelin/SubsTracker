@@ -3965,7 +3965,7 @@ const api = {
           const content = '这是一条测试订阅通知，用于验证钉钉机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
 
           success = await sendDingtalkBotNotification(title, content, testConfig);
-          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置'+JSON.stringify(testConfig);
+          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置'+success;
         } else if (body.type === 'email') {
           const testConfig = {
             ...config,
@@ -4699,7 +4699,8 @@ async function sendDingtalkBotNotification(title, content, config) {
   try {
     if (!config.DINGTALKBOT_WEBHOOK) {
       console.error('[钉钉机器人] 通知未配置，缺少Webhook URL');
-      return false;
+      //return false;
+		return '[钉钉机器人] 通知未配置，缺少Webhook URL';
     }
 
     console.log('[钉钉机器人] 开始发送通知到: ' + config.DINGTALKBOT_WEBHOOK);
@@ -4757,7 +4758,7 @@ async function sendDingtalkBotNotification(title, content, config) {
     const responseText = await response.text();
     console.log('[钉钉机器人] 响应状态:', response.status);
     console.log('[钉钉机器人] 响应内容:', responseText);
-
+    
     if (response.ok) {
       try {
         const result = JSON.parse(responseText);
@@ -4766,19 +4767,23 @@ async function sendDingtalkBotNotification(title, content, config) {
           return true;
         } else {
           console.error('[钉钉机器人] 发送失败，错误码:', result.errcode, '错误信息:', result.errmsg);
-          return false;
+         // return false;
+		  return '[钉钉机器人] 发送失败，错误码:'+ result.errcode+'错误信息:'+ result.errmsg;
         }
       } catch (parseError) {
-        console.error('[钉钉机器人] 解析响应失败:', parseError);
+        //console.error('[钉钉机器人] 解析响应失败:', parseError);
         return false;
+		  return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
       }
     } else {
-      console.error('[钉钉机器人] HTTP请求失败，状态码:', response.status);
-      return false;
+     // console.error('[钉钉机器人] HTTP请求失败，状态码:', response.status);
+      //return false;
+		return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
     }
   } catch (error) {
     console.error('[钉钉机器人] 发送通知失败:', error);
-    return false;
+    //return false;
+	return '[钉钉机器人] 发送通知失败:'+error;
   }
 }
 

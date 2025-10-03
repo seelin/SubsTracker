@@ -3343,7 +3343,7 @@ const configPage = `
       const barkConfig = document.getElementById('barkConfig');
 
       // 重置所有配置区域
-      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig, emailConfig, barkConfig].forEach(config => {
+      [telegramConfig, notifyxConfig, webhookConfig, wechatbotConfig,dingtalkbotConfig, emailConfig, barkConfig].forEach(config => {
         config.classList.remove('active', 'inactive');
         config.classList.add('inactive');
       });
@@ -3362,6 +3362,9 @@ const configPage = `
         } else if (type === 'wechatbot') {
           wechatbotConfig.classList.remove('inactive');
           wechatbotConfig.classList.add('active');
+		  } else if (type === 'dingtalkbot') {
+            dingtalkbotConfig.classList.remove('inactive');
+            dingtalkbotConfig.classList.add('active');
         } else if (type === 'email') {
           emailConfig.classList.remove('inactive');
           emailConfig.classList.add('active');
@@ -3965,7 +3968,7 @@ const api = {
           const content = '这是一条测试订阅通知，用于验证钉钉机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
 
           success = await sendDingtalkBotNotification(title, content, testConfig);
-          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置'+success;
+          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置';
         } else if (body.type === 'email') {
           const testConfig = {
             ...config,
@@ -4767,23 +4770,23 @@ async function sendDingtalkBotNotification(title, content, config) {
           return true;
         } else {
           console.error('[钉钉机器人] 发送失败，错误码:', result.errcode, '错误信息:', result.errmsg);
-         // return false;
-		  return '[钉钉机器人] 发送失败，错误码:'+ result.errcode+'错误信息:'+ result.errmsg;
+          return false;
+		  //return '[钉钉机器人] 发送失败，错误码:'+ result.errcode+'错误信息:'+ result.errmsg;
         }
       } catch (parseError) {
-        //console.error('[钉钉机器人] 解析响应失败:', parseError);
+        console.error('[钉钉机器人] 解析响应失败:', parseError);
         return false;
-		  return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
+		//return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
       }
     } else {
-     // console.error('[钉钉机器人] HTTP请求失败，状态码:', response.status);
-      //return false;
-		return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
+       console.error('[钉钉机器人] HTTP请求失败，状态码:', response.status);
+       return false;
+	   //return '[钉钉机器人] HTTP请求失败，状态码:'+ response.status;
     }
   } catch (error) {
     console.error('[钉钉机器人] 发送通知失败:', error);
-    //return false;
-	return '[钉钉机器人] 发送通知失败:'+error;
+    return false;
+	//return '[钉钉机器人] 发送通知失败:'+error;
   }
 }
 
@@ -4876,9 +4879,10 @@ async function sendNotificationToAllChannels(title, commonContent, config, logPr
         const success = await sendWechatBotNotification(title, wechatbotContent, config);
         console.log(`${logPrefix} 发送企业微信机器人通知 ${success ? '成功' : '失败'}`);
     }
+	
     if (config.ENABLED_NOTIFIERS.includes('dingtalkbot')) {
-        const wechatbotContent = commonContent.replace(/(\**|\*|##|#|`)/g, '');
-        const success = await sendWechatBotNotification(title, dingtalkbotContent, config);
+        const dingtalkbotContent = commonContent.replace(/(\**|\*|##|#|`)/g, '');
+        const success = await sendDingtalkBotNotification(title, dingtalkbotContent, config);
         console.log(`${logPrefix} 发送钉钉机器人通知 ${success ? '成功' : '失败'}`);
     }
 	

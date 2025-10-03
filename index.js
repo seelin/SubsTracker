@@ -3111,12 +3111,12 @@ const configPage = `
           </div>
 
 
-          <div id="wechatbotConfig" class="config-section">
+          <div id="dingtalkbotConfig" class="config-section">
             <h4 class="text-md font-medium text-gray-900 mb-3">钉钉机器人 配置</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
               <div>
-                <label for="wechatbotWebhook" class="block text-sm font-medium text-gray-700">机器人 Webhook URL</label>
-                <input type="url" id="wechatbotWebhook" placeholder="https://oapi.dingtalk.com/robot/send?access_token=your access_token" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <label for="dingtalkbotWebhook" class="block text-sm font-medium text-gray-700">机器人 Webhook URL</label>
+                <input type="url" id="dingtalkbotWebhook" placeholder="https://oapi.dingtalk.com/robot/send?access_token=your access_token" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                 <p class="mt-1 text-sm text-gray-500">从钉钉群聊中添加机器人获取的 Webhook URL</p>
               </div>
               <div>

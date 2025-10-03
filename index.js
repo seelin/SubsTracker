@@ -3965,7 +3965,7 @@ const api = {
           const content = '这是一条测试订阅通知，用于验证钉钉机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
 
           success = await sendDingtalkBotNotification(title, content, testConfig);
-          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置';
+          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置'+JSON.stringify(testConfig);
         } else if (body.type === 'email') {
           const testConfig = {
             ...config,
@@ -4728,7 +4728,6 @@ async function sendDingtalkBotNotification(title, content, config) {
         }
       };
     }
-
     // 处理@功能
     if (config.DINGTALKBOT_AT_ALL === 'true') {
       // @所有人

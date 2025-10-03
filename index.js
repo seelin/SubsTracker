@@ -3261,10 +3261,10 @@ const configPage = `
         document.getElementById('wechatbotAtMobiles').value = config.WECHATBOT_AT_MOBILES || '';
         document.getElementById('wechatbotAtAll').checked = config.WECHATBOT_AT_ALL === 'true';
 
-        document.getElementById('dingtalkbotWebhook').value = config.DINGTLKBOT_WEBHOOK || '';
-        document.getElementById('dingtalkbotMsgType').value = config.DINGTLKBOT_MSG_TYPE || 'text';
-        document.getElementById('dingtalkbotAtMobiles').value = config.DINGTLKBOTAT_MOBILES || '';
-        document.getElementById('dingtalkbotAtAll').checked = config.DINGTLKBOT_AT_ALL === 'true';
+        document.getElementById('dingtalkbotWebhook').value = config.DINGTALKBOT_WEBHOOK || '';
+        document.getElementById('dingtalkbotMsgType').value = config.DINGTALKBOT_MSG_TYPE || 'text';
+        document.getElementById('dingtalkbotAtMobiles').value = config.DINGTALKBOTAT_MOBILES || '';
+        document.getElementById('dingtalkbotAtAll').checked = config.DINGTALKBOT_AT_ALL === 'true';
 		
 		
         document.getElementById('resendApiKey').value = config.RESEND_API_KEY || '';
@@ -4872,6 +4872,12 @@ async function sendNotificationToAllChannels(title, commonContent, config, logPr
         const success = await sendWechatBotNotification(title, wechatbotContent, config);
         console.log(`${logPrefix} 发送企业微信机器人通知 ${success ? '成功' : '失败'}`);
     }
+    if (config.ENABLED_NOTIFIERS.includes('dingtalkbot')) {
+        const wechatbotContent = commonContent.replace(/(\**|\*|##|#|`)/g, '');
+        const success = await sendWechatBotNotification(title, dingtalkbotContent, config);
+        console.log(`${logPrefix} 发送钉钉机器人通知 ${success ? '成功' : '失败'}`);
+    }
+	
     if (config.ENABLED_NOTIFIERS.includes('weixin')) {
         const weixinContent = `【${title}】\n\n${commonContent.replace(/(\**|\*|##|#|`)/g, '')}`;
         const result = await sendWeComNotification(weixinContent, config);

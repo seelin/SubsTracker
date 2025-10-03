@@ -2973,6 +2973,10 @@ const configPage = `
                 <span class="ml-2 text-sm text-gray-700">企业微信机器人</span>
               </label>
               <label class="inline-flex items-center">
+                <input type="checkbox" name="enabledNotifiers" value="dingtalkbot" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                <span class="ml-2 text-sm text-gray-700">钉钉机器人</span>
+              </label>
+              <label class="inline-flex items-center">
                 <input type="checkbox" name="enabledNotifiers" value="email" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
                 <span class="ml-2 text-sm text-gray-700">邮件通知</span>
               </label>
@@ -2991,6 +2995,9 @@ const configPage = `
               <a href="https://developer.work.weixin.qq.com/document/path/91770" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 <i class="fas fa-external-link-alt ml-1"></i> 企业微信机器人文档
               </a>
+              <a href="https://open.dingtalk.com/document/orgapp/webhook-robot" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
+                <i class="fas fa-external-link-alt ml-1"></i> 钉钉机器人文档
+              </a>			  
               <a href="https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/" target="_blank" class="text-indigo-600 hover:text-indigo-800 text-sm">
                 <i class="fas fa-external-link-alt ml-1"></i> 获取 Resend API Key
               </a>
@@ -3103,6 +3110,44 @@ const configPage = `
             </div>
           </div>
 
+
+          <div id="wechatbotConfig" class="config-section">
+            <h4 class="text-md font-medium text-gray-900 mb-3">钉钉机器人 配置</h4>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+              <div>
+                <label for="wechatbotWebhook" class="block text-sm font-medium text-gray-700">机器人 Webhook URL</label>
+                <input type="url" id="wechatbotWebhook" placeholder="https://oapi.dingtalk.com/robot/send?access_token=your access_token" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500">从钉钉群聊中添加机器人获取的 Webhook URL</p>
+              </div>
+              <div>
+                <label for="dingtalkbotMsgType" class="block text-sm font-medium text-gray-700">消息类型</label>
+                <select id="dingtalkbotMsgType" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                  <option value="text">文本消息</option>
+                  <option value="markdown">Markdown消息</option>
+                </select>
+                <p class="mt-1 text-sm text-gray-500">选择发送的消息格式类型</p>
+              </div>
+              <div>
+                <label for="dingtalkbotAtMobiles" class="block text-sm font-medium text-gray-700">@手机号 (可选)</label>
+                <input type="text" id="dingtalkbotAtMobiles" placeholder="13800138000,13900139000" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <p class="mt-1 text-sm text-gray-500">需要@的手机号，多个用逗号分隔，留空则不@任何人</p>
+              </div>
+              <div>
+                <label for="dingtalkbotAtAll" class="block text-sm font-medium text-gray-700 mb-2">@所有人</label>
+                <label class="inline-flex items-center">
+                  <input type="checkbox" id="dingtalkbotAtAll" class="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                  <span class="ml-2 text-sm text-gray-700">发送消息时@所有人</span>
+                </label>
+              </div>
+            </div>
+            <div class="flex justify-end">
+              <button type="button" id="testDingtalkBotBtn" class="btn-secondary text-white px-4 py-2 rounded-md text-sm font-medium">
+                <i class="fas fa-paper-plane mr-2"></i>测试 钉钉机器人
+              </button>
+            </div>
+          </div>
+
+
           <div id="emailConfig" class="config-section">
             <h4 class="text-md font-medium text-gray-900 mb-3">邮件通知 配置</h4>
             <div class="grid grid-cols-1 gap-4 mb-4">
@@ -3210,10 +3255,18 @@ const configPage = `
         document.getElementById('webhookMethod').value = config.WEBHOOK_METHOD || 'POST';
         document.getElementById('webhookHeaders').value = config.WEBHOOK_HEADERS || '';
         document.getElementById('webhookTemplate').value = config.WEBHOOK_TEMPLATE || '';
+		
         document.getElementById('wechatbotWebhook').value = config.WECHATBOT_WEBHOOK || '';
         document.getElementById('wechatbotMsgType').value = config.WECHATBOT_MSG_TYPE || 'text';
         document.getElementById('wechatbotAtMobiles').value = config.WECHATBOT_AT_MOBILES || '';
         document.getElementById('wechatbotAtAll').checked = config.WECHATBOT_AT_ALL === 'true';
+
+        document.getElementById('dingtalkbotWebhook').value = config.DINGTLKBOT_WEBHOOK || '';
+        document.getElementById('dingtalkbotMsgType').value = config.DINGTLKBOT_MSG_TYPE || 'text';
+        document.getElementById('dingtalkbotAtMobiles').value = config.DINGTLKBOTAT_MOBILES || '';
+        document.getElementById('dingtalkbotAtAll').checked = config.DINGTLKBOT_AT_ALL === 'true';
+		
+		
         document.getElementById('resendApiKey').value = config.RESEND_API_KEY || '';
         document.getElementById('emailFrom').value = config.EMAIL_FROM || '';
         document.getElementById('emailFromName').value = config.EMAIL_FROM_NAME || '订阅提醒系统';
@@ -3348,10 +3401,18 @@ const configPage = `
         WEBHOOK_HEADERS: document.getElementById('webhookHeaders').value.trim(),
         WEBHOOK_TEMPLATE: document.getElementById('webhookTemplate').value.trim(),
         SHOW_LUNAR: document.getElementById('showLunarGlobal').checked,
+		
         WECHATBOT_WEBHOOK: document.getElementById('wechatbotWebhook').value.trim(),
         WECHATBOT_MSG_TYPE: document.getElementById('wechatbotMsgType').value,
         WECHATBOT_AT_MOBILES: document.getElementById('wechatbotAtMobiles').value.trim(),
         WECHATBOT_AT_ALL: document.getElementById('wechatbotAtAll').checked.toString(),
+
+        DINGTALKBOT_WEBHOOK: document.getElementById('dingtalkbotWebhook').value.trim(),
+        DINGTALKBOT_MSG_TYPE: document.getElementById('dingtalkbotMsgType').value,
+        DINGTALKBOT_AT_MOBILES: document.getElementById('dingtalkbotAtMobiles').value.trim(),
+        DINGTALKBOT_AT_ALL: document.getElementById('dingtalkbotAtAll').checked.toString(),
+		
+		
         RESEND_API_KEY: document.getElementById('resendApiKey').value.trim(),
         EMAIL_FROM: document.getElementById('emailFrom').value.trim(),
         EMAIL_FROM_NAME: document.getElementById('emailFromName').value.trim(),
@@ -3413,6 +3474,7 @@ const configPage = `
       const buttonId = type === 'telegram' ? 'testTelegramBtn' :
                       type === 'notifyx' ? 'testNotifyXBtn' :
                       type === 'wechatbot' ? 'testWechatBotBtn' :
+					  type === 'dingtalkbot' ? 'testDingtalkBotBtn' :
                       type === 'email' ? 'testEmailBtn' :
                       type === 'bark' ? 'testBarkBtn' : 'testWebhookBtn';
       const button = document.getElementById(buttonId);
@@ -3420,6 +3482,7 @@ const configPage = `
       const serviceName = type === 'telegram' ? 'Telegram' :
                           type === 'notifyx' ? 'NotifyX' :
                           type === 'wechatbot' ? '企业微信机器人' :
+						  type === 'dingtalkbot' ? '钉钉机器人' :
                           type === 'email' ? '邮件通知' :
                           type === 'bark' ? 'Bark' : '企业微信应用通知';
 
@@ -3466,6 +3529,18 @@ const configPage = `
 
         if (!config.WECHATBOT_WEBHOOK) {
           showToast('请先填写企业微信机器人 Webhook URL', 'warning');
+          button.innerHTML = originalContent;
+          button.disabled = false;
+          return;
+        }
+	  } else if (type === 'dingtalkbot') {
+        config.DINGTALKBOT_WEBHOOK = document.getElementById('dingtalkbotWebhook').value.trim();
+        config.DINGTALKBOT_MSG_TYPE = document.getElementById('dingtalkbotMsgType').value;
+        config.DINGTALKBOT_AT_MOBILES = document.getElementById('dingtalkbotAtMobiles').value.trim();
+        config.DINGTALKBOT_AT_ALL = document.getElementById('dingtalkbotAtAll').checked.toString();
+
+        if (!config.DINGTALKBOT_WEBHOOK) {
+          showToast('请先填写订订机器人 Webhook URL', 'warning');
           button.innerHTML = originalContent;
           button.disabled = false;
           return;
@@ -3534,6 +3609,10 @@ const configPage = `
       testNotification('wechatbot');
     });
 
+   document.getElementById('testDingtalkBotBtn').addEventListener('click', () => {
+      testNotification('dingtalkbot');
+    });
+	
     document.getElementById('testEmailBtn').addEventListener('click', () => {
       testNotification('email');
     });
@@ -3769,10 +3848,17 @@ const api = {
             WEBHOOK_HEADERS: newConfig.WEBHOOK_HEADERS || '',
             WEBHOOK_TEMPLATE: newConfig.WEBHOOK_TEMPLATE || '',
             SHOW_LUNAR: newConfig.SHOW_LUNAR === true,
+			  
             WECHATBOT_WEBHOOK: newConfig.WECHATBOT_WEBHOOK || '',
             WECHATBOT_MSG_TYPE: newConfig.WECHATBOT_MSG_TYPE || 'text',
             WECHATBOT_AT_MOBILES: newConfig.WECHATBOT_AT_MOBILES || '',
             WECHATBOT_AT_ALL: newConfig.WECHATBOT_AT_ALL || 'false',
+			  
+            DINGTALKBOT_WEBHOOK: newConfig.DINGTALKBOT_WEBHOOK || '',
+            DINGTALKBOT_MSG_TYPE: newConfig.DINGTALKBOT_MSG_TYPE || 'text',
+            DINGTALKBOT_AT_MOBILES: newConfig.DINGTALKBOT_AT_MOBILES || '',
+            DINGTALKBOT_AT_ALL: newConfig.DINGTALKBOT_AT_ALL || 'false',
+			  
             RESEND_API_KEY: newConfig.RESEND_API_KEY || '',
             EMAIL_FROM: newConfig.EMAIL_FROM || '',
             EMAIL_FROM_NAME: newConfig.EMAIL_FROM_NAME || '',
@@ -3866,6 +3952,20 @@ const api = {
 
           success = await sendWechatBotNotification(title, content, testConfig);
           message = success ? '企业微信机器人通知发送成功' : '企业微信机器人通知发送失败，请检查配置';
+		} else if (body.type === 'dingtalkbot') {
+          const testConfig = {
+            ...config,
+            DINGTALKBOT_WEBHOOK: body.DINGTALKBOT_WEBHOOK,
+            DINGTALKBOT_MSG_TYPE: body.DINGTALKBOT_MSG_TYPE,
+            DINGTALKBOT_AT_MOBILES: body.DINGTALKBOT_AT_MOBILES,
+            DINGTALKBOT_AT_ALL: body.DINGTALKBOT_AT_ALL
+          };
+
+          const title = '测试订阅通知';
+          const content = '这是一条测试订阅通知，用于验证钉钉机器人功能是否正常工作。\n\n发送时间: ' + formatBeijingTime();
+
+          success = await sendDingtalkBotNotification(title, content, testConfig);
+          message = success ? '钉钉机器人通知发送成功' : '钉钉机器人通知发送失败，请检查配置';
         } else if (body.type === 'email') {
           const testConfig = {
             ...config,
@@ -4089,10 +4189,17 @@ async function getConfig(env) {
       WEBHOOK_HEADERS: config.WEBHOOK_HEADERS || '',
       WEBHOOK_TEMPLATE: config.WEBHOOK_TEMPLATE || '',
       SHOW_LUNAR: config.SHOW_LUNAR === true,
+		
       WECHATBOT_WEBHOOK: config.WECHATBOT_WEBHOOK || '',
       WECHATBOT_MSG_TYPE: config.WECHATBOT_MSG_TYPE || 'text',
       WECHATBOT_AT_MOBILES: config.WECHATBOT_AT_MOBILES || '',
       WECHATBOT_AT_ALL: config.WECHATBOT_AT_ALL || 'false',
+		
+      DINGTALKBOT_WEBHOOK: config.DINGTALKBOT_WEBHOOK || '',
+      DINGTALKBOT_MSG_TYPE: config.DINGTALKBOT_MSG_TYPE || 'text',
+      DINGTALKBOT_AT_MOBILES: config.DINGTALKBOT_AT_MOBILES || '',
+      DINGTALKBOT_AT_ALL: config.DINGTALKBOT_AT_ALL || 'false',
+	
       RESEND_API_KEY: config.RESEND_API_KEY || '',
       EMAIL_FROM: config.EMAIL_FROM || '',
       EMAIL_FROM_NAME: config.EMAIL_FROM_NAME || '',
@@ -4122,10 +4229,17 @@ async function getConfig(env) {
       WEBHOOK_HEADERS: '',
       WEBHOOK_TEMPLATE: '',
       SHOW_LUNAR: true,
+		
       WECHATBOT_WEBHOOK: '',
       WECHATBOT_MSG_TYPE: 'text',
       WECHATBOT_AT_MOBILES: '',
       WECHATBOT_AT_ALL: 'false',
+		
+      DINGTALKBOT_WEBHOOK: '',
+      DINGTALKBOT_MSG_TYPE: 'text',
+      DINGTALKBOT_AT_MOBILES: '',
+      DINGTALKBOT_AT_ALL: 'false',
+		
       RESEND_API_KEY: '',
       EMAIL_FROM: '',
       EMAIL_FROM_NAME: '',
@@ -4581,6 +4695,95 @@ async function sendWechatBotNotification(title, content, config) {
   }
 }
 
+async function sendDingtalkBotNotification(title, content, config) {
+  try {
+    if (!config.DINGTALKBOT_WEBHOOK) {
+      console.error('[钉钉机器人] 通知未配置，缺少Webhook URL');
+      return false;
+    }
+
+    console.log('[钉钉机器人] 开始发送通知到: ' + config.DINGTALKBOT_WEBHOOK);
+
+    // 构建消息内容
+    let messageData;
+    const msgType = config.DINGTALKBOT_MSG_TYPE || 'text';
+
+    if (msgType === 'markdown') {
+      // Markdown 消息格式
+      const markdownContent = `# ${title}\n\n${content}`;
+      messageData = {
+        msgtype: 'markdown',
+        markdown: {
+          content: markdownContent
+        }
+      };
+    } else {
+      // 文本消息格式 - 优化显示
+      const textContent = `${title}\n\n${content}`;
+      messageData = {
+        msgtype: 'text',
+		at:{isAtAll:False,atUserIds:[],atMobiles:[]},  
+        text: {
+          content: textContent
+        }
+      };
+    }
+
+    // 处理@功能
+    if (config.DINGTALKBOT_AT_ALL === 'true') {
+      // @所有人
+      if (msgType === 'text') {
+        messageData.at.isAtAll= True;
+      }
+    } else if (config.DINGTALKBOT_AT_MOBILES) {
+      // @指定手机号
+      const mobiles = config.DINGTALKBOT_AT_MOBILES.split(',').map(m => m.trim()).filter(m => m);
+      if (mobiles.length > 0) {
+        if (msgType === 'text') {
+          messageData.at.atMobiles = mobiles;
+        }
+      }
+    }
+
+    console.log('[钉钉机器人] 发送消息数据:', JSON.stringify(messageData, null, 2));
+
+    const response = await fetch(config.DINGTALKBOT_WEBHOOK, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(messageData)
+    });
+
+    const responseText = await response.text();
+    console.log('[钉钉机器人] 响应状态:', response.status);
+    console.log('[钉钉机器人] 响应内容:', responseText);
+
+    if (response.ok) {
+      try {
+        const result = JSON.parse(responseText);
+        if (result.errcode === 0) {
+          console.log('[钉钉机器人] 通知发送成功');
+          return true;
+        } else {
+          console.error('[钉钉机器人] 发送失败，错误码:', result.errcode, '错误信息:', result.errmsg);
+          return false;
+        }
+      } catch (parseError) {
+        console.error('[钉钉机器人] 解析响应失败:', parseError);
+        return false;
+      }
+    } else {
+      console.error('[钉钉机器人] HTTP请求失败，状态码:', response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error('[钉钉机器人] 发送通知失败:', error);
+    return false;
+  }
+}
+
+	  
 // 优化通知内容格式
 function formatNotificationContent(subscriptions, config) {
   const showLunar = config.SHOW_LUNAR === true;

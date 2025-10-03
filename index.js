@@ -4723,7 +4723,7 @@ async function sendDingtalkBotNotification(title, content, config) {
       const textContent = `${title}\n\n${content}`;
       messageData = {
         msgtype: 'text',
-		at:{isAtAll:False,atUserIds:[],atMobiles:[]},  
+		at:{isAtAll:'',atUserIds:[],atMobiles:[]},  
         text: {
           content: textContent
         }
